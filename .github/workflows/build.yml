@@ -1,0 +1,33 @@
+name: Flutter Build
+on:
+  push:
+    branches: [ main ]  # 触发分支
+  pull_request:
+    branches: [ main ]  # PR 触发
+jobs:
+  build:
+    runs-on: ubuntu-latest  # 使用 Ubuntu 环境
+    steps:
+      - uses: actions/checkout@v4  # 检出代码
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2  # 安装 Flutter
+        with:
+          flutter-version: '3.19.0'  # 指定 Flutter 版本
+      - name: Install dependencies
+        run: flutter pub get  # 安装依赖
+      - name: Build APK (Android)
+        run: flutter build apk --release  # 构建 Android APK
+      - name: Build IPA (iOS)
+        if: runner.os == 'macos'  # iOS 构建需要 macOS 环境
+        run: flutter build ipa --export-options-plist=ios/ExportOptions.plist
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3  # 上传 APK
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+      # 如果需要 iOS IPA，可以添加类似步骤
+      # - name: Upload IPA Artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: app.ipa
+      #     path: build/ios/ipa/app.ipa

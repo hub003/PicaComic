@@ -1,5 +1,6 @@
 name: Flutter Build
 on:
+  workflow_dispatch:  # 必须添加这一行才能手动触发
   push:
     branches: [ main ]  # 触发分支
   pull_request:
